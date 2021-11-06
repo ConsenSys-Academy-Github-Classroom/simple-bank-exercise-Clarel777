@@ -14,15 +14,18 @@ contract SimpleBank {
     
     // Fill in the visibility keyword. 
     // Hint: We want to protect our users balance from other contracts
+    // Use the keyword private
     mapping (address => uint) private balances ;
     
     // Fill in the visibility keyword
     // Hint: We want to create a getter function and allow contracts to be able
     //       to see if a user is enrolled.
+    // Use the keyword public so this information is visible
     mapping (address => bool) public enrolled;
 
     // Let's make sure everyone knows who owns the bank, yes, fill in the
     // appropriate visilibility keyword
+    /// Use the keyword public
     address public owner = msg.sender;
     
     /* Events - publicize actions to external listeners
@@ -37,26 +40,6 @@ contract SimpleBank {
     // Create an event called LogWithdrawal
     // Hint: it should take 3 arguments: an accountAddress, withdrawAmount and a newBalance 
     event LogWithdrawal(address accountAddress, uint withdrawAmount, uint newBalance);
-
-    // Ensures the msg.sender has already been enrolled before executing a function
-    modifier onlyEnrolled {
-        require(
-            enrolled[msg.sender] == true,
-            "Only enrolled accounts can call this function."
-        );
-        _;
-    }
-
-    // Ensures the msg.sender has not already been enrolled before executing a function
-    modifier notEnrolled {
-        require(
-            enrolled[msg.sender] == false,
-            "Only accounts not enrolled can call this function."
-        );
-        _;
-    }
-
-
 
     constructor() public {
         /* Set the owner to the creator of this contract */
@@ -78,8 +61,6 @@ contract SimpleBank {
     /// @notice Get balance
     /// @return The balance of the user
 
-    
-
     function getBalance() public returns (uint) {
       // 1. A SPECIAL KEYWORD prevents function from editing state variables;
       //    allows function to run locally/off blockchain
@@ -90,7 +71,7 @@ contract SimpleBank {
     /// @notice Enroll a customer with the bank
     /// @return The users enrolled status
     // Emit the appropriate event
-    function enroll() public notEnrolled returns (bool){
+    function enroll() public returns (bool){
       // 1. enroll of the sender of this transaction
       enrolled[msg.sender] = true;
 
@@ -101,10 +82,13 @@ contract SimpleBank {
 
     /// @notice Deposit ether into bank
     /// @return The balance of the user after the deposit is made
-    function deposit() public onlyEnrolled payable returns (uint) {
+
+    function deposit() public payable returns (uint) {
       // 1. Add the appropriate keyword so that this function can receive ether
+      // keyword is payable
     
       // 2. Users should be enrolled before they can make deposits
+      //use a require method
 
       require(enrolled[msg.sender]);
 
@@ -114,7 +98,7 @@ contract SimpleBank {
 
       // 4. Emit the appropriate event associated with this function
 
-      emit LogDepositMade(msg.sender, balances[msg.sender]);
+      emit LogDepositMade(msg.sender, msg.value);
 
       // 5. return the balance of sndr of this transaction
 
